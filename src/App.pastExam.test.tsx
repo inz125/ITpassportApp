@@ -144,59 +144,51 @@ describe('分野別演習での過去問の表示', () => {
   })
 })
 
-describe('模擬試験での過去問の表示', () => {
-  // 乱数が常に0だと、出題順は fixed → original → past になる
-  const pool = [past, fixed, original]
+describe('過去問の模擬試験での表示', () => {
+  // 技術分野の過去問（模擬試験は、3つの分野すべてに問題がある回だけ始められる）
+  const pastTech: Question = {
+    id: 'p3',
+    field: 'technology',
+    text: '問題p3',
+    choices: ['p3-正解', 'p3-誤り1', 'p3-誤り2', 'p3-誤り3'],
+    answerIndex: 0,
+    explanation: '問題p3の解説',
+    source: { exam: EXAM, number: 70 },
+  }
+  // 過去問の模擬試験は問番号順に出題され、オリジナル問題は含まれない（問12 → 問50 → 問70）
+  const pool = [fixed, pastTech, past, original]
+  const MOCK_EXAM = '模擬試験（令和8年度 公開問題）'
 
   it('解答中の画面に、出典・図・事例文が表示される', async () => {
     const user = setup(pool)
-    await click(user, '模擬試験を始める')
-
-    expect(screen.getByText(`出典：${EXAM} 問50`)).toBeInTheDocument()
-    expect(
-      screen.getByRole('img', { name: '選択肢アからエの図' }),
-    ).toBeInTheDocument()
-
-    await click(user, '次へ')
-    await click(user, '次へ')
+    await click(user, MOCK_EXAM)
 
     expect(
       screen.getByText(`出典：${EXAM} 問12（選択肢の順序を変更）`),
     ).toBeInTheDocument()
     expect(screen.getByText('事例文の本文')).toBeInTheDocument()
+
+    await click(user, '次へ')
+
+    expect(screen.getByText(`出典：${EXAM} 問50`)).toBeInTheDocument()
+    expect(
+      screen.getByRole('img', { name: '選択肢アからエの図' }),
+    ).toBeInTheDocument()
   })
 
   it('結果画面で過去問を開くと、出典とアプリ独自の解説である旨が表示される', async () => {
     const user = setup(pool)
-    await click(user, '模擬試験を始める')
+    await click(user, MOCK_EXAM)
     await click(user, '確認へ')
     await click(user, '提出する')
 
     const items = within(screen.getByRole('list')).getAllByRole('listitem')
-    const pastItem = items[2]
-    await user.click(within(pastItem).getByRole('button'))
+    expect(items).toHaveLength(3)
+    await user.click(within(items[0]).getByRole('button'))
 
     expect(
-      within(pastItem).getByText(`出典：${EXAM} 問12（選択肢の順序を変更）`),
+      within(items[0]).getByText(`出典：${EXAM} 問12（選択肢の順序を変更）`),
     ).toBeInTheDocument()
-    expect(within(pastItem).getByText(APP_EXPLANATION_NOTE)).toBeInTheDocument()
-  })
-
-  it('結果画面でオリジナル問題を開いても、出典やアプリ独自の旨は表示されない', async () => {
-    const user = setup(pool)
-    await click(user, '模擬試験を始める')
-    await click(user, '確認へ')
-    await click(user, '提出する')
-
-    const originalItem = within(screen.getByRole('list')).getAllByRole(
-      'listitem',
-    )[1]
-    await user.click(within(originalItem).getByRole('button'))
-
-    expect(within(originalItem).getByText('問題o1の解説')).toBeInTheDocument()
-    expect(within(originalItem).queryByText(/^出典：/)).not.toBeInTheDocument()
-    expect(
-      within(originalItem).queryByText(APP_EXPLANATION_NOTE),
-    ).not.toBeInTheDocument()
+    expect(within(items[0]).getByText(APP_EXPLANATION_NOTE)).toBeInTheDocument()
   })
 })
