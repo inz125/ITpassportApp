@@ -55,6 +55,25 @@ describe('shuffleChoices（選択肢のシャッフル）', () => {
   })
 })
 
+describe('shuffleChoices（並び替えない問題）', () => {
+  it('選択肢を並び替えない問題は、元の順のまま出題される', () => {
+    const fixed = { ...makeQuestion('1'), fixedChoiceOrder: true }
+
+    const result = shuffleChoices(fixed, always0)
+
+    expect(result.choices).toEqual(['A', 'B', 'C', 'D'])
+    expect(result.answerIndex).toBe(0)
+  })
+
+  it('出題しても、並び替えない問題の選択肢は元の順のまま', () => {
+    const pool = [{ ...makeQuestion('1'), fixedChoiceOrder: true }]
+
+    const [question] = createQuiz(pool, always0)
+
+    expect(question.choices).toEqual(['A', 'B', 'C', 'D'])
+  })
+})
+
 describe('createQuiz（出題）', () => {
   it('問題集から10問を重複なく選ぶ', () => {
     const quiz = createQuiz(makePool(20), Math.random)
