@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FIELD_LABELS } from '../domain/question'
 import { isAnswerCorrect, type Session } from '../domain/quizSession'
+import { QuitDialog } from './QuitDialog'
 
 type Props = {
   session: Session
@@ -74,21 +75,11 @@ export function QuizScreen({ session, onSelect, onNext, onQuit }: Props) {
       </button>
 
       {confirming && (
-        <div className="overlay">
-          <div role="alertdialog" aria-modal="true" aria-label="中断の確認">
-            <p>解答を中断してトップに戻りますか？</p>
-            <button type="button" onClick={onQuit}>
-              中断する
-            </button>
-            <button
-              type="button"
-              className="primary"
-              onClick={() => setConfirming(false)}
-            >
-              続ける
-            </button>
-          </div>
-        </div>
+        <QuitDialog
+          message="解答を中断してトップに戻りますか？"
+          onQuit={onQuit}
+          onCancel={() => setConfirming(false)}
+        />
       )}
     </main>
   )

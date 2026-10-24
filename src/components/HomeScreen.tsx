@@ -3,17 +3,21 @@ import type { Field } from '../domain/judgeExam'
 import { FIELD_LABELS } from '../domain/question'
 
 type Props = {
+  examEnabled: boolean
   weakCount: number
   fieldCounts: Record<Field, number>
   onStart: () => void
+  onStartExam: () => void
   onStartWeak: () => void
   onStartField: (field: Field) => void
 }
 
 export function HomeScreen({
+  examEnabled,
   weakCount,
   fieldCounts,
   onStart,
+  onStartExam,
   onStartWeak,
   onStartField,
 }: Props) {
@@ -22,6 +26,9 @@ export function HomeScreen({
       <h1>ITパスポート学習</h1>
       <button type="button" className="primary" onClick={onStart}>
         一問一答を始める
+      </button>
+      <button type="button" disabled={!examEnabled} onClick={onStartExam}>
+        模擬試験を始める
       </button>
       <button type="button" disabled={weakCount === 0} onClick={onStartWeak}>
         {`苦手を復習する（${weakCount}問）`}

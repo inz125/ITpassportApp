@@ -78,6 +78,12 @@ describe('answerQuestion（解答）', () => {
     expect(answerQuestion(session, -1)).toEqual(session)
     expect(answerQuestion(session, 4)).toEqual(session)
   })
+
+  it('問題がない試験では、何も記録されない', () => {
+    const empty = startExam([])
+
+    expect(answerQuestion(empty, 0)).toEqual(empty)
+  })
 })
 
 describe('問題の移動', () => {

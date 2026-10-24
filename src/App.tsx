@@ -1,13 +1,16 @@
 import { useState } from 'react'
+import { ExamFlow } from './components/ExamFlow'
 import { HomeScreen } from './components/HomeScreen'
 import { QuizScreen } from './components/QuizScreen'
 import { ResultScreen } from './components/ResultScreen'
 import { QUESTIONS } from './data/questions'
+import { canStartExam } from './domain/examSession'
 import { countByField, pickByField } from './domain/fieldPractice'
 import {
   countWeak,
   pickWeakQuestions,
   recordAnswer,
+  recordResults,
   type History,
 } from './domain/history'
 import type { Field } from './domain/judgeExam'
@@ -35,16 +38,19 @@ type Props = {
   questions?: readonly Question[]
   random?: Random
   storage?: Storage | null
+  now?: () => number
 }
 
 function App({
   questions = QUESTIONS,
   random = Math.random,
   storage = getDefaultStorage(),
+  now = Date.now,
 }: Props) {
   const [session, setSession] = useState<Session | null>(null)
   const [mode, setMode] = useState<Mode>({ type: 'quiz' })
   const [history, setHistory] = useState<History>(() => loadHistory(storage))
+  const [examining, setExamining] = useState(false)
 
   const pickSource = (target: Mode): readonly Question[] => {
     switch (target.type) {
@@ -79,9 +85,28 @@ function App({
     setSession(answered)
   }
 
+  if (examining) {
+    return (
+      <ExamFlow
+        questions={questions}
+        random={random}
+        now={now}
+        onSubmit={(results) => {
+          // 提出したときに、全問の正誤をまとめて記録する（未回答は不正解）
+          const nextHistory = recordResults(history, results)
+          setHistory(nextHistory)
+          saveHistory(storage, nextHistory)
+        }}
+        onExit={() => setExamining(false)}
+      />
+    )
+  }
+
   if (session === null) {
     return (
       <HomeScreen
+        examEnabled={canStartExam(questions)}
+        onStartExam={() => setExamining(true)}
         weakCount={countWeak(questions, history)}
         fieldCounts={countByField(questions)}
         onStart={() => start({ type: 'quiz' })}
