@@ -38,3 +38,9 @@ export const createQuiz = (
   shuffle(pool, random)
     .slice(0, count)
     .map((question) => shuffleChoices(question, random))
+
+// 問題の順番はそのままで、選択肢だけを並び替える（過去問の模擬試験は問番号順に出題するため）
+export const shuffleAllChoices = (
+  questions: readonly Question[],
+  random: Random,
+): Question[] => questions.map((question) => shuffleChoices(question, random))

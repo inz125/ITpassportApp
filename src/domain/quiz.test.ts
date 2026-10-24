@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Question } from './question'
-import { createQuiz, shuffle, shuffleChoices } from './quiz'
+import { createQuiz, shuffle, shuffleAllChoices, shuffleChoices } from './quiz'
 
 const makeQuestion = (id: string): Question => ({
   id,
@@ -101,5 +101,34 @@ describe('createQuiz（出題）', () => {
 
     expect(first.choices).toEqual(['B', 'C', 'D', 'A'])
     expect(first.answerIndex).toBe(3)
+  })
+})
+
+describe('shuffleAllChoices（順番はそのままで、選択肢だけ並び替える）', () => {
+  it('問題の順番は変えず、各問題の選択肢を並び替える', () => {
+    const result = shuffleAllChoices(makePool(3), always0)
+
+    expect(result.map((q) => q.id)).toEqual(['1', '2', '3'])
+    expect(result[0].choices).toEqual(['B', 'C', 'D', 'A'])
+    expect(result[0].answerIndex).toBe(3)
+  })
+
+  it('選択肢を並び替えない問題は、元の順のまま', () => {
+    const pool = [{ ...makeQuestion('1'), fixedChoiceOrder: true }]
+
+    expect(shuffleAllChoices(pool, always0)[0].choices).toEqual([
+      'A',
+      'B',
+      'C',
+      'D',
+    ])
+  })
+
+  it('元の問題を変更しない', () => {
+    const pool = makePool(2)
+
+    shuffleAllChoices(pool, always0)
+
+    expect(pool[0].choices).toEqual(['A', 'B', 'C', 'D'])
   })
 })
