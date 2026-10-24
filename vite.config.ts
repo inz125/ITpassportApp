@@ -1,10 +1,10 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
-// GitHub Pages では https://<user>.github.io/itpassportapp/ で配信されるため、
+// GitHub Pages では https://<user>.github.io/ITpassportApp/ で配信されるため、
 // 開発・プレビュー時も同じベースパスに揃える
 export default defineConfig({
-  base: '/itpassportapp/',
+  base: '/ITpassportApp/',
   plugins: [react()],
   test: {
     environment: 'jsdom',
