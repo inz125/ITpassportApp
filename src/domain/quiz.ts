@@ -1,4 +1,8 @@
-import type { Question } from './question'
+import {
+  isPastQuestion,
+  ORIGINAL_CHOICE_LABELS,
+  type Question,
+} from './question'
 
 export type Random = () => number
 
@@ -27,6 +31,10 @@ export const shuffleChoices = (
     ...question,
     choices: order.map((index) => question.choices[index]),
     answerIndex: order.indexOf(question.answerIndex),
+    // 過去問は、元の記号を選択肢と一緒に動かす（解説の「アは〜」と合うように）
+    ...(isPastQuestion(question) && {
+      choiceLabels: order.map((index) => ORIGINAL_CHOICE_LABELS[index]),
+    }),
   }
 }
 
