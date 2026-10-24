@@ -32,8 +32,8 @@ function ResultItem({ result }: { result: ExamQuestionResult }) {
       </button>
       {open && (
         <div className="result-detail">
-          <p>{`あなたの答え：${selected === null ? '未回答' : `${choiceLabel(question, selected)}　${question.choices[selected]}`}`}</p>
-          <p>{`正しい答え：${choiceLabel(question, question.answerIndex)}　${question.choices[question.answerIndex]}`}</p>
+          <p>{`あなたの答え：${selected === null ? '未回答' : `${choiceLabel(selected)}　${question.choices[selected]}`}`}</p>
+          <p>{`正しい答え：${choiceLabel(question.answerIndex)}　${question.choices[question.answerIndex]}`}</p>
           <Explanation question={question} />
           {source && <p className="note">{source}</p>}
         </div>

@@ -51,6 +51,15 @@ describe('令和8年度 ITパスポート試験 公開問題', () => {
     }
   })
 
+  it('解説は、選択肢の並びが変わっても読めるよう、ア〜エの記号を使わない', () => {
+    for (const question of R08_QUESTIONS) {
+      const number = question.source!.number
+      expect(question.explanation, `問${number}`).not.toMatch(
+        /(^|[^ァ-ヶー])[アイウエ]([はがとをのにでも，、）]|$)/,
+      )
+    }
+  })
+
   it('アプリで出題する問題に含まれている', () => {
     for (const question of R08_QUESTIONS) {
       expect(QUESTIONS).toContain(question)

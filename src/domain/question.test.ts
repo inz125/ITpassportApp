@@ -47,23 +47,12 @@ describe('formatSource（出典の表示）', () => {
 })
 
 describe('choiceLabel（選択肢の記号）', () => {
-  it('記号が決まっていない問題は、表示の位置に ア・イ・ウ・エ を付ける', () => {
-    expect([0, 1, 2, 3].map((i) => choiceLabel(original, i))).toEqual([
+  it('表示の位置に ア・イ・ウ・エ を付ける', () => {
+    expect([0, 1, 2, 3].map((i) => choiceLabel(i))).toEqual([
       'ア',
       'イ',
       'ウ',
       'エ',
-    ])
-  })
-
-  it('記号が決まっている問題は、その記号を返す', () => {
-    const shuffled = { ...past, choiceLabels: ['ウ', 'ア', 'エ', 'イ'] }
-
-    expect([0, 1, 2, 3].map((i) => choiceLabel(shuffled, i))).toEqual([
-      'ウ',
-      'ア',
-      'エ',
-      'イ',
     ])
   })
 })
