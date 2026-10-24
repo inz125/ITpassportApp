@@ -1,4 +1,5 @@
 import type { Question } from '../domain/question'
+import { R06_QUESTIONS } from './pastExams/r06'
 import { R07_QUESTIONS } from './pastExams/r07'
 import { R08_QUESTIONS } from './pastExams/r08'
 
@@ -390,4 +391,5 @@ export const QUESTIONS: readonly Question[] = [
   ...ORIGINAL_QUESTIONS,
   ...R08_QUESTIONS,
   ...R07_QUESTIONS,
+  ...R06_QUESTIONS,
 ]
