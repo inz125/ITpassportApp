@@ -1,4 +1,5 @@
 import type { Question } from '../domain/question'
+import { R07_QUESTIONS } from './pastExams/r07'
 import { R08_QUESTIONS } from './pastExams/r08'
 
 // オリジナル問題（各分野10問、計30問）。正解は選択肢の先頭に置いてあり、出題時にシャッフルされる
@@ -388,4 +389,5 @@ export const ORIGINAL_QUESTIONS: readonly Question[] = [
 export const QUESTIONS: readonly Question[] = [
   ...ORIGINAL_QUESTIONS,
   ...R08_QUESTIONS,
+  ...R07_QUESTIONS,
 ]
