@@ -29,9 +29,6 @@ export type Question = {
   figure?: QuestionFigure
   // 選択肢が図になっているなど、並び替えられない問題
   fixedChoiceOrder?: boolean
-  // 並び替えたあとも、元の記号（ア〜エ）を選択肢と一緒に持ち歩くための記号。過去問だけが持つ。
-  // 解説の「アは〜」と合わせるため。オリジナル問題は、元の位置が正解（先頭）と分かってしまうので持たない
-  choiceLabels?: readonly string[]
 }
 
 export const FIELD_LABELS: Record<Field, string> = {
@@ -52,9 +49,5 @@ export const formatSource = (question: Question): string | null => {
 
 const KANA = ['ア', 'イ', 'ウ', 'エ']
 
-// 選択肢の左に表示する記号。決まっていなければ、表示の位置に ア・イ・ウ・エ を付ける
-export const choiceLabel = (question: Question, index: number): string =>
-  question.choiceLabels?.[index] ?? KANA[index]
-
-// 元の順（ア〜エ）に付ける記号
-export const ORIGINAL_CHOICE_LABELS: readonly string[] = KANA
+// 選択肢の左に表示する記号。並び替えたあとも、表示の位置に ア・イ・ウ・エ の順で付ける
+export const choiceLabel = (index: number): string => KANA[index]

@@ -66,15 +66,15 @@ describe('選択肢の記号のバッジ', () => {
     expect(choiceButtons('o1').map(badgeOf)).toEqual(['ア', 'イ', 'ウ', 'エ'])
   })
 
-  it('過去問は、並び替えても元の記号が選択肢と一緒に動く', async () => {
+  it('過去問は、並び替えても、表示された順に ア・イ・ウ・エ が付く', async () => {
     const user = setup([past])
     await click(user, '一問一答を始める')
 
-    // 乱数が常に0だと、先頭（元のア＝正解）が末尾に回る
+    // 乱数が常に0だと、先頭（正解）が末尾に回る
     const buttons = choiceButtons('p1')
-    expect(buttons.map(badgeOf)).toEqual(['イ', 'ウ', 'エ', 'ア'])
+    expect(buttons.map(badgeOf)).toEqual(['ア', 'イ', 'ウ', 'エ'])
     expect(
-      within(screen.getByRole('button', { name: 'p1-正解' })).getByText('ア'),
+      within(screen.getByRole('button', { name: 'p1-正解' })).getByText('エ'),
     ).toBeInTheDocument()
   })
 
@@ -103,7 +103,7 @@ describe('選択肢の記号のバッジ', () => {
     await click(user, /^模擬試験/)
 
     // 過去問の模擬試験は問番号順に出題されるので、最初は p1
-    expect(choiceButtons('p1').map(badgeOf)).toEqual(['イ', 'ウ', 'エ', 'ア'])
+    expect(choiceButtons('p1').map(badgeOf)).toEqual(['ア', 'イ', 'ウ', 'エ'])
   })
 
   it('模擬試験の結果画面では、あなたの答えと正しい答えに記号が付く', async () => {
@@ -116,7 +116,7 @@ describe('選択肢の記号のバッジ', () => {
       }),
     ])
     await click(user, /^模擬試験/)
-    // 1問目（p1）で、表示の先頭の選択肢（元のイ＝誤り1）を選ぶ
+    // 1問目（p1）で、表示の先頭の選択肢（誤り1）を選ぶ
     await user.click(choiceButtons('p1')[0])
     await click(user, '確認へ')
     await click(user, '提出する')
@@ -125,10 +125,10 @@ describe('選択肢の記号のバッジ', () => {
     await user.click(within(first).getByRole('button'))
 
     expect(
-      within(first).getByText('あなたの答え：イ p1-誤り1'),
+      within(first).getByText('あなたの答え：ア p1-誤り1'),
     ).toBeInTheDocument()
     expect(
-      within(first).getByText('正しい答え：ア p1-正解'),
+      within(first).getByText('正しい答え：エ p1-正解'),
     ).toBeInTheDocument()
   })
 })

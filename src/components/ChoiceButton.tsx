@@ -31,7 +31,7 @@ export function ChoiceButton({
       onClick={onClick}
     >
       <span className="badge" aria-hidden="true">
-        {choiceLabel(question, index)}
+        {choiceLabel(index)}
       </span>
       <span className="choice-text">{question.choices[index]}</span>
       {state && (
