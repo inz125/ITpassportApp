@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   getDefaultStorage,
   HISTORY_STORAGE_KEY,
@@ -21,6 +21,7 @@ const storageWith = (value: string | null) => ({
 })
 
 afterEach(() => {
+  vi.restoreAllMocks()
   localStorage.clear()
 })
 
@@ -77,5 +78,13 @@ describe('保存できない環境・壊れた保存内容', () => {
 describe('getDefaultStorage（標準のストレージ）', () => {
   it('ブラウザの localStorage を返す', () => {
     expect(getDefaultStorage()).toBe(localStorage)
+  })
+
+  it('localStorage にアクセスすると例外になる環境では、null を返す', () => {
+    vi.spyOn(window, 'localStorage', 'get').mockImplementation(() => {
+      throw new Error('アクセスできません')
+    })
+
+    expect(getDefaultStorage()).toBeNull()
   })
 })

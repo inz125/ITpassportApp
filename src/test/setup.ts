@@ -4,4 +4,6 @@ import { afterEach } from 'vitest'
 
 afterEach(() => {
   cleanup()
+  // 履歴は localStorage に残るため、テスト間で持ち越さない
+  localStorage.clear()
 })

@@ -186,3 +186,8 @@ button.primary {
   background: var(--bg);
   border-radius: 16px;
 }
+
+.note {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
