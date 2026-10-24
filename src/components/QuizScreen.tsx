@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { FIELD_LABELS } from '../domain/question'
 import { isAnswerCorrect, type Session } from '../domain/quizSession'
+import { ChoiceButton } from './ChoiceButton'
 import { Explanation } from './Explanation'
+import { FieldLabel } from './FieldLabel'
 import { QuestionBody } from './QuestionBody'
 import { QuitDialog } from './QuitDialog'
 
@@ -24,7 +25,7 @@ export function QuizScreen({ session, onSelect, onNext, onQuit }: Props) {
     <main className="screen">
       <header className="quiz-header">
         <p>{`${session.current + 1} / ${total}問`}</p>
-        <p className="field">{FIELD_LABELS[question.field]}</p>
+        <FieldLabel field={question.field} />
         <button type="button" onClick={() => setConfirming(true)}>
           中断する
         </button>
@@ -35,22 +36,21 @@ export function QuizScreen({ session, onSelect, onNext, onQuit }: Props) {
       <div className="choices">
         {question.choices.map((choice, index) => {
           const state = !answered
-            ? ''
+            ? undefined
             : index === question.answerIndex
               ? 'correct'
               : index === session.selected
                 ? 'wrong'
-                : ''
+                : undefined
           return (
-            <button
+            <ChoiceButton
               key={choice}
-              type="button"
-              className={`choice ${state}`}
+              question={question}
+              index={index}
+              state={state}
               disabled={answered}
               onClick={() => onSelect(index)}
-            >
-              {choice}
-            </button>
+            />
           )
         })}
       </div>

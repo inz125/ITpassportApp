@@ -6,6 +6,7 @@ import type { History } from './domain/history'
 import type { Field } from './domain/judgeExam'
 import type { Question } from './domain/question'
 import { HISTORY_STORAGE_KEY } from './storage/historyStorage'
+import { choiceText } from './test/choice'
 
 type User = ReturnType<typeof userEvent.setup>
 
@@ -144,7 +145,7 @@ describe('過去問の模擬試験の出題', () => {
     // 乱数が常に0だと、選択肢の先頭（正解）が末尾に回る
     const names = screen
       .getAllByRole('button', { name: /^r8-1-/ })
-      .map((button) => button.textContent)
+      .map(choiceText)
     expect(names).toEqual([
       'r8-1-誤り1',
       'r8-1-誤り2',
@@ -161,7 +162,7 @@ describe('過去問の模擬試験の出題', () => {
 
     const names = screen
       .getAllByRole('button', { name: /^r8-1-/ })
-      .map((button) => button.textContent)
+      .map(choiceText)
     expect(names).toEqual([
       'r8-1-正解',
       'r8-1-誤り1',
