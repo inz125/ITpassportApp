@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { QUESTIONS } from '../src/data/questions'
+import { answerCurrent, goNext } from './helpers'
 
 const STORAGE_KEY = 'itpassport-app:history:v1'
 
@@ -9,20 +9,6 @@ const seedHistory = (page: Page, value: string) =>
     STORAGE_KEY,
     value,
   ] as const)
-
-// 表示中の問題を、問題データから引いて正解 / 不正解の選択肢をタップする
-const answerCurrent = async (page: Page, correct: boolean) => {
-  const text = await page.getByRole('heading', { level: 2 }).textContent()
-  const question = QUESTIONS.find((q) => q.text === text)!
-  const choice = correct
-    ? question.choices[question.answerIndex]
-    : question.choices.find((_, index) => index !== question.answerIndex)!
-  await page.getByRole('button', { name: choice, exact: true }).click()
-  return question
-}
-
-const goNext = (page: Page) =>
-  page.getByRole('button', { name: /次の問題へ|結果を見る/ }).click()
 
 test('苦手な問題を復習して全問正解すると、苦手がなくなる', async ({ page }) => {
   await seedHistory(

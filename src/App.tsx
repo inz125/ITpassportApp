@@ -3,12 +3,14 @@ import { HomeScreen } from './components/HomeScreen'
 import { QuizScreen } from './components/QuizScreen'
 import { ResultScreen } from './components/ResultScreen'
 import { QUESTIONS } from './data/questions'
+import { countByField, pickByField } from './domain/fieldPractice'
 import {
   countWeak,
   pickWeakQuestions,
   recordAnswer,
   type History,
 } from './domain/history'
+import type { Field } from './domain/judgeExam'
 import type { Question } from './domain/question'
 import { createQuiz, type Random } from './domain/quiz'
 import {
@@ -26,7 +28,8 @@ import {
   saveHistory,
 } from './storage/historyStorage'
 
-type Mode = 'quiz' | 'weak'
+type Mode =
+  { type: 'quiz' } | { type: 'weak' } | { type: 'field'; field: Field }
 
 type Props = {
   questions?: readonly Question[]
@@ -40,12 +43,22 @@ function App({
   storage = getDefaultStorage(),
 }: Props) {
   const [session, setSession] = useState<Session | null>(null)
-  const [mode, setMode] = useState<Mode>('quiz')
+  const [mode, setMode] = useState<Mode>({ type: 'quiz' })
   const [history, setHistory] = useState<History>(() => loadHistory(storage))
 
+  const pickSource = (target: Mode): readonly Question[] => {
+    switch (target.type) {
+      case 'weak':
+        return pickWeakQuestions(questions, history)
+      case 'field':
+        return pickByField(questions, target.field)
+      default:
+        return questions
+    }
+  }
+
   const start = (nextMode: Mode) => {
-    const source =
-      nextMode === 'weak' ? pickWeakQuestions(questions, history) : questions
+    const source = pickSource(nextMode)
     if (source.length === 0) return
     setMode(nextMode)
     setSession(startSession(createQuiz(source, random)))
@@ -70,8 +83,10 @@ function App({
     return (
       <HomeScreen
         weakCount={countWeak(questions, history)}
-        onStart={() => start('quiz')}
-        onStartWeak={() => start('weak')}
+        fieldCounts={countByField(questions)}
+        onStart={() => start({ type: 'quiz' })}
+        onStartWeak={() => start({ type: 'weak' })}
+        onStartField={(field) => start({ type: 'field', field })}
       />
     )
   }
@@ -81,7 +96,7 @@ function App({
       <ResultScreen
         results={getResults(session)}
         remainingWeak={
-          mode === 'weak' ? countWeak(questions, history) : undefined
+          mode.type === 'weak' ? countWeak(questions, history) : undefined
         }
         onRetry={() => start(mode)}
         onHome={backToHome}
