@@ -196,6 +196,10 @@ describe('中断', () => {
   })
 })
 
+// 結果一覧の項目から、問題の id（問題文「問題1」→ "1"）を取り出す
+const currentIdOf = (item: HTMLElement) =>
+  /×問題(\w+)/.exec(item.textContent!)![1]
+
 describe('結果画面', () => {
   // 1問目: 正解 / 2問目: 不正解 / 3問目: 正解 で最後まで解く
   const solveAll = async (user: ReturnType<typeof userEvent.setup>) => {
@@ -233,6 +237,43 @@ describe('結果画面', () => {
     expect(items[0]).toHaveTextContent(`○${texts[0]}`)
     expect(items[1]).toHaveTextContent(`×${texts[1]}`)
     expect(items[2]).toHaveTextContent(`○${texts[2]}`)
+  })
+
+  it('間違えた問題は、タップしなくても、問題文・あなたの答え・正しい答え・解説が表示される', async () => {
+    const user = setup()
+    await solveAll(user)
+
+    const items = within(screen.getByRole('list')).getAllByRole('listitem')
+    const wrongId = currentIdOf(items[1])
+    expect(items[1]).toHaveTextContent(`あなたの答え：ア ${wrongId}-誤り1`)
+    expect(items[1]).toHaveTextContent(`正しい答え：エ ${wrongId}-正解`)
+    expect(items[1]).toHaveTextContent(`問題${wrongId}の解説`)
+  })
+
+  it('正解した問題には、答えや解説を表示しない', async () => {
+    const user = setup()
+    await solveAll(user)
+
+    const items = within(screen.getByRole('list')).getAllByRole('listitem')
+    for (const item of [items[0], items[2]]) {
+      expect(item).not.toHaveTextContent('あなたの答え')
+      expect(item).not.toHaveTextContent('解説')
+    }
+  })
+
+  it('全問正解のときは、答えや解説はどこにも表示されない', async () => {
+    const user = setup()
+    await start(user)
+    for (const [index, kind] of (['正解', '正解', '正解'] as const).entries()) {
+      await choose(user, kind)
+      await user.click(
+        screen.getByRole('button', {
+          name: index === 2 ? '結果を見る' : '次の問題へ',
+        }),
+      )
+    }
+
+    expect(screen.queryByText(/あなたの答え/)).not.toBeInTheDocument()
   })
 
   it('「もう一度」を押すと新しい問題で最初から始まる', async () => {

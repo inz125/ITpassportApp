@@ -266,7 +266,14 @@ button.primary {
 
 .results li {
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.result-summary {
+  display: flex;
   gap: 8px;
+  overflow-wrap: anywhere;
 }
 
 .overlay {

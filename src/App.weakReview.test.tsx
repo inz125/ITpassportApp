@@ -256,6 +256,19 @@ describe('苦手復習の結果画面', () => {
     expect(screen.getByText('残りの苦手：1問')).toBeInTheDocument()
   })
 
+  it('間違えた問題は、あなたの答え・正しい答え・解説も表示される', async () => {
+    const { user } = setup({ history: weak2 })
+    await startWeak(user)
+
+    const [, second] = await answerAll(user, ['正解', '誤り1'])
+
+    const items = within(screen.getByRole('list')).getAllByRole('listitem')
+    expect(items[1]).toHaveTextContent(`あなたの答え：`)
+    expect(items[1]).toHaveTextContent(`${second}-誤り1`)
+    expect(items[1]).toHaveTextContent(`問題${second}の解説`)
+    expect(items[0]).not.toHaveTextContent('あなたの答え')
+  })
+
   it('「もう一度」を押すと、残っている苦手から出題される', async () => {
     const { user } = setup({ history: weak2 })
     await startWeak(user)

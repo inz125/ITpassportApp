@@ -119,4 +119,13 @@ describe('getResults / countCorrect（結果）', () => {
     expect(results.map((r) => r.question.id)).toEqual(['1', '2', '3'])
     expect(countCorrect(results)).toBe(2)
   })
+
+  it('問題ごとに、選んだ選択肢の位置も返す', () => {
+    let session = startSession(questions)
+    for (const choice of [0, 3, 2]) {
+      session = goNext(selectChoice(session, choice))
+    }
+
+    expect(getResults(session).map((r) => r.selected)).toEqual([0, 3, 2])
+  })
 })
