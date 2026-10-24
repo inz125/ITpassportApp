@@ -18,6 +18,7 @@ export const shuffleChoices = (
   question: Question,
   random: Random,
 ): Question => {
+  if (question.fixedChoiceOrder) return question
   const order = shuffle(
     question.choices.map((_, index) => index),
     random,

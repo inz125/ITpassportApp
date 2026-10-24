@@ -233,3 +233,34 @@ button.primary {
   padding: 8px 12px;
   overflow-wrap: anywhere;
 }
+
+/* 過去問は箇条書き（a, b, c）を含むので、問題文・事例文の改行を保つ */
+.question-body h2,
+.passage p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.question-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.passage {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.passage summary {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.figure {
+  max-width: 100%;
+  height: auto;
+  background: #fff;
+  border-radius: 8px;
+}

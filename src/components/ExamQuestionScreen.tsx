@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { formatElapsed } from '../domain/elapsed'
 import type { ExamSession } from '../domain/examSession'
 import { FIELD_LABELS } from '../domain/question'
+import { QuestionBody } from './QuestionBody'
 import { QuitDialog } from './QuitDialog'
 
 type Props = {
@@ -39,7 +40,7 @@ export function ExamQuestionScreen({
       </header>
       <p className="note">{`経過時間：${formatElapsed(elapsedMs)}`}</p>
 
-      <h2>{question.text}</h2>
+      <QuestionBody key={question.id} question={question} />
 
       <div className="choices">
         {question.choices.map((choice, index) => (

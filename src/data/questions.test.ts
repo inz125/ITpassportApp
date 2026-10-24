@@ -1,16 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import type { Field } from '../domain/judgeExam'
-import { QUESTIONS } from './questions'
+import { isPastQuestion } from '../domain/question'
+import { ORIGINAL_QUESTIONS, QUESTIONS } from './questions'
 
 const countByField = (field: Field) =>
-  QUESTIONS.filter((question) => question.field === field).length
+  ORIGINAL_QUESTIONS.filter((question) => question.field === field).length
+
+const PAST_QUESTIONS = QUESTIONS.filter(isPastQuestion)
 
 describe('QUESTIONS（問題データ）', () => {
-  it('問題は30問ある', () => {
-    expect(QUESTIONS).toHaveLength(30)
+  it('オリジナル問題は30問ある', () => {
+    expect(ORIGINAL_QUESTIONS).toHaveLength(30)
   })
 
-  it('ストラテジ・マネジメント・テクノロジが10問ずつある', () => {
+  it('オリジナル問題は、ストラテジ・マネジメント・テクノロジが10問ずつある', () => {
     expect(countByField('strategy')).toBe(10)
     expect(countByField('management')).toBe(10)
     expect(countByField('technology')).toBe(10)
@@ -60,11 +63,11 @@ describe('QUESTIONS（問題データ）', () => {
   })
 
   // 正解だけ長い問題は、内容が分からなくても長さで当てられてしまう
-  describe('選択肢の長さに偏りがない', () => {
+  describe('オリジナル問題の選択肢の長さに偏りがない（過去問は原文のまま）', () => {
     const length = (text: string) => [...text].length
 
     it('正解の選択肢が誤答の平均の1.5倍を超えて長い問題がない', () => {
-      for (const question of QUESTIONS) {
+      for (const question of ORIGINAL_QUESTIONS) {
         const answer = length(question.choices[question.answerIndex])
         const others = question.choices
           .filter((_, index) => index !== question.answerIndex)
@@ -76,7 +79,7 @@ describe('QUESTIONS（問題データ）', () => {
     })
 
     it('正解の選択肢がいちばん長い問題は、全体の40%以下である', () => {
-      const longestAnswer = QUESTIONS.filter((question) => {
+      const longestAnswer = ORIGINAL_QUESTIONS.filter((question) => {
         const lengths = question.choices.map(length)
         const answer = lengths[question.answerIndex]
         return lengths.every(
@@ -84,7 +87,42 @@ describe('QUESTIONS（問題データ）', () => {
         )
       })
 
-      expect(longestAnswer.length).toBeLessThanOrEqual(QUESTIONS.length * 0.4)
+      expect(longestAnswer.length).toBeLessThanOrEqual(
+        ORIGINAL_QUESTIONS.length * 0.4,
+      )
+    })
+  })
+
+  describe('過去問', () => {
+    it('過去問には、出典（試験名と問番号）が必ずある', () => {
+      for (const question of PAST_QUESTIONS) {
+        expect(question.source!.exam.trim(), question.id).not.toBe('')
+        expect(Number.isInteger(question.source!.number), question.id).toBe(
+          true,
+        )
+        expect(question.source!.number, question.id).toBeGreaterThan(0)
+      }
+    })
+
+    it('同じ試験の中で、問番号が重複しない', () => {
+      const keys = PAST_QUESTIONS.map(
+        (q) => `${q.source!.exam} 問${q.source!.number}`,
+      )
+
+      expect(new Set(keys).size).toBe(keys.length)
+    })
+
+    it('図がある問題は、画像の URL と代替テキストを持つ', () => {
+      for (const question of QUESTIONS.filter((q) => q.figure)) {
+        expect(question.figure!.src, question.id).not.toBe('')
+        expect(question.figure!.alt.trim(), question.id).not.toBe('')
+      }
+    })
+
+    it('事例文がある問題は、事例文が空でない', () => {
+      for (const question of QUESTIONS.filter((q) => q.passage !== undefined)) {
+        expect(question.passage!.trim(), question.id).not.toBe('')
+      }
     })
   })
 })

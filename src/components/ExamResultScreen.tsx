@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { formatElapsed } from '../domain/elapsed'
 import type { ExamGrade, ExamQuestionResult } from '../domain/examSession'
 import { FIELDS } from '../domain/fieldPractice'
-import { FIELD_LABELS } from '../domain/question'
+import { FIELD_LABELS, formatSource } from '../domain/question'
+import { Explanation } from './Explanation'
 
 type Props = {
   grade: ExamGrade
@@ -14,6 +15,7 @@ type Props = {
 function ResultItem({ result }: { result: ExamQuestionResult }) {
   const [open, setOpen] = useState(false)
   const { question, selected, correct } = result
+  const source = formatSource(question)
 
   return (
     <li>
@@ -32,7 +34,8 @@ function ResultItem({ result }: { result: ExamQuestionResult }) {
         <div className="result-detail">
           <p>{`あなたの答え：${selected === null ? '未回答' : question.choices[selected]}`}</p>
           <p>{`正しい答え：${question.choices[question.answerIndex]}`}</p>
-          <p>{question.explanation}</p>
+          <Explanation question={question} />
+          {source && <p className="note">{source}</p>}
         </div>
       )}
     </li>

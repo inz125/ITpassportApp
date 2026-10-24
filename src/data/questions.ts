@@ -1,7 +1,7 @@
 import type { Question } from '../domain/question'
 
 // オリジナル問題（各分野10問、計30問）。正解は選択肢の先頭に置いてあり、出題時にシャッフルされる
-export const QUESTIONS: readonly Question[] = [
+export const ORIGINAL_QUESTIONS: readonly Question[] = [
   {
     id: 'strategy-1',
     field: 'strategy',
@@ -382,3 +382,6 @@ export const QUESTIONS: readonly Question[] = [
       '多要素認証は、知識（パスワード）、所持（スマートフォン）、生体（指紋）のうち、異なる種類の要素を2つ以上組み合わせる認証です。パスワードと秘密の質問は、どちらも知識なので同じ種類です。',
   },
 ]
+
+// アプリで出題する全問題（オリジナル問題と過去問）
+export const QUESTIONS: readonly Question[] = [...ORIGINAL_QUESTIONS]
