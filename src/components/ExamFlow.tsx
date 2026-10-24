@@ -10,13 +10,15 @@ import {
   type ExamQuestionResult,
 } from '../domain/examSession'
 import type { Question } from '../domain/question'
-import { createQuiz, type Random } from '../domain/quiz'
+import { createQuiz, shuffleAllChoices, type Random } from '../domain/quiz'
 import { ExamConfirmScreen } from './ExamConfirmScreen'
 import { ExamQuestionScreen } from './ExamQuestionScreen'
 import { ExamResultScreen } from './ExamResultScreen'
 
 type Props = {
   questions: readonly Question[]
+  // 過去問は問番号の順に出題する。false のときは問題の順番もシャッフルする
+  keepOrder: boolean
   random: Random
   now: () => number
   // 提出したときに、採点結果を渡す（履歴への記録は呼び出し側）
@@ -26,11 +28,28 @@ type Props = {
 
 type Phase = 'answering' | 'confirming' | 'result'
 
-const newExam = (questions: readonly Question[], random: Random) =>
-  startExam(createQuiz(questions, random, questions.length))
+const newExam = (
+  questions: readonly Question[],
+  keepOrder: boolean,
+  random: Random,
+) =>
+  startExam(
+    keepOrder
+      ? shuffleAllChoices(questions, random)
+      : createQuiz(questions, random, questions.length),
+  )
 
-export function ExamFlow({ questions, random, now, onSubmit, onExit }: Props) {
-  const [session, setSession] = useState(() => newExam(questions, random))
+export function ExamFlow({
+  questions,
+  keepOrder,
+  random,
+  now,
+  onSubmit,
+  onExit,
+}: Props) {
+  const [session, setSession] = useState(() =>
+    newExam(questions, keepOrder, random),
+  )
   const [phase, setPhase] = useState<Phase>('answering')
   const [startedAt, setStartedAt] = useState(now)
   const [current, setCurrent] = useState(now)
@@ -55,7 +74,7 @@ export function ExamFlow({ questions, random, now, onSubmit, onExit }: Props) {
 
   const restart = () => {
     const time = now()
-    setSession(newExam(questions, random))
+    setSession(newExam(questions, keepOrder, random))
     setStartedAt(time)
     setCurrent(time)
     setFinished(null)
