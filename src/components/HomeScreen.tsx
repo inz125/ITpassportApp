@@ -10,6 +10,8 @@ export type MockExamButton = {
 }
 
 type Props = {
+  updateAvailable: boolean
+  onUpdate: () => void
   mockExams: readonly MockExamButton[]
   weakCount: number
   fieldCounts: Record<Field, number>
@@ -20,6 +22,8 @@ type Props = {
 }
 
 export function HomeScreen({
+  updateAvailable,
+  onUpdate,
   mockExams,
   weakCount,
   fieldCounts,
@@ -31,6 +35,14 @@ export function HomeScreen({
   return (
     <main className="screen">
       <h1>ITパスポート学習</h1>
+      {updateAvailable && (
+        <div role="status" className="update-notice">
+          <p>新しい版があります</p>
+          <button type="button" onClick={onUpdate}>
+            更新する
+          </button>
+        </div>
+      )}
       <button type="button" className="primary" onClick={onStart}>
         一問一答を始める
       </button>
