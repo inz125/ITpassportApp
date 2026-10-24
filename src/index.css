@@ -409,3 +409,63 @@ button.primary {
   margin: 0;
   font-weight: bold;
 }
+
+.field-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.field-progress li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.score-chart {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 160px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--accent);
+}
+
+.score-bar {
+  flex: 1;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+}
+
+.score-bar.pass {
+  background: var(--ok);
+}
+
+.score-bar.fail {
+  background: var(--ng);
+}
+
+.pass-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 60%;
+  border-top: 2px dashed var(--accent);
+}
+
+.exam-records {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.exam-records p {
+  margin: 0;
+}

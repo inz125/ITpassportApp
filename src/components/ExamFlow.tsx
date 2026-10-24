@@ -7,7 +7,6 @@ import {
   gradeExam,
   startExam,
   type ExamGrade,
-  type ExamQuestionResult,
 } from '../domain/examSession'
 import type { Question } from '../domain/question'
 import { createQuiz, shuffleAllChoices, type Random } from '../domain/quiz'
@@ -21,8 +20,8 @@ type Props = {
   keepOrder: boolean
   random: Random
   now: () => number
-  // 提出したときに、採点結果を渡す（履歴への記録は呼び出し側）
-  onSubmit: (results: readonly ExamQuestionResult[]) => void
+  // 提出したときに、採点結果と所要時間を渡す（履歴・成績への記録は呼び出し側）
+  onSubmit: (grade: ExamGrade, elapsedMs: number) => void
   onExit: () => void
 }
 
@@ -67,9 +66,10 @@ export function ExamFlow({
 
   const submit = () => {
     const grade = gradeExam(session)
-    setFinished({ grade, elapsedMs: now() - startedAt })
+    const elapsedMs = now() - startedAt
+    setFinished({ grade, elapsedMs })
     setPhase('result')
-    onSubmit(grade.results)
+    onSubmit(grade, elapsedMs)
   }
 
   const restart = () => {
