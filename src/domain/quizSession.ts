@@ -12,6 +12,11 @@ export type QuestionResult = {
   correct: boolean
 }
 
+// 一問一答の結果。選んだ選択肢の位置も持つ（結果画面で誤答を見せるため）
+export type AnsweredResult = QuestionResult & {
+  selected: number
+}
+
 export const startSession = (questions: readonly Question[]): Session => ({
   questions,
   current: 0,
@@ -45,10 +50,11 @@ export const goNext = (session: Session): Session => {
   }
 }
 
-export const getResults = (session: Session): QuestionResult[] =>
+export const getResults = (session: Session): AnsweredResult[] =>
   session.answers.map((answer, index) => ({
     question: session.questions[index],
     correct: answer === session.questions[index].answerIndex,
+    selected: answer,
   }))
 
 export const countCorrect = (results: readonly QuestionResult[]): number =>
