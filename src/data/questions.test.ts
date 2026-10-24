@@ -58,4 +58,33 @@ describe('QUESTIONS（問題データ）', () => {
       }
     }
   })
+
+  // 正解だけ長い問題は、内容が分からなくても長さで当てられてしまう
+  describe('選択肢の長さに偏りがない', () => {
+    const length = (text: string) => [...text].length
+
+    it('正解の選択肢が誤答の平均の1.5倍を超えて長い問題がない', () => {
+      for (const question of QUESTIONS) {
+        const answer = length(question.choices[question.answerIndex])
+        const others = question.choices
+          .filter((_, index) => index !== question.answerIndex)
+          .map(length)
+        const average = others.reduce((sum, n) => sum + n, 0) / others.length
+
+        expect(answer / average, question.id).toBeLessThanOrEqual(1.5)
+      }
+    })
+
+    it('正解の選択肢がいちばん長い問題は、全体の40%以下である', () => {
+      const longestAnswer = QUESTIONS.filter((question) => {
+        const lengths = question.choices.map(length)
+        const answer = lengths[question.answerIndex]
+        return lengths.every(
+          (n, index) => index === question.answerIndex || n < answer,
+        )
+      })
+
+      expect(longestAnswer.length).toBeLessThanOrEqual(QUESTIONS.length * 0.4)
+    })
+  })
 })
