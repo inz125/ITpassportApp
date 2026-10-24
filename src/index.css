@@ -191,3 +191,45 @@ button.primary {
   font-size: 0.9rem;
   opacity: 0.8;
 }
+
+.choice[aria-pressed='true'] {
+  border: 2px solid var(--accent);
+}
+
+.exam-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.exam-nav button {
+  flex: 1;
+}
+
+.verdict {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.verdict.pass {
+  color: var(--ok);
+}
+
+.verdict.fail {
+  color: var(--ng);
+}
+
+.result-toggle {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.result-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  overflow-wrap: anywhere;
+}
