@@ -73,11 +73,11 @@ PR テンプレートに沿って、受け入れ条件と追加したテスト�
 | `.github/workflows/ci.yml`     | PR・`main` へ push | lint、format、型チェック、カバレッジ、E2E（WebKit / Chromium） |
 | `.github/workflows/deploy.yml` | `main` へ push     | テスト → ビルド → GitHub Pages へ公開                          |
 
-公開 URL: `https://inz125.github.io/itpassportapp/`
+公開 URL: `https://inz125.github.io/ITpassportApp/`
 
 > 初回のみ、GitHub のリポジトリ設定 **Settings → Pages → Build and deployment → Source** を「GitHub Actions」にする必要がある。
 
 ## iPhone での確認
 
 - 公開 URL を Safari で開き、共有メニューの「ホーム画面に追加」でアプリのように使える。
-- 開発中に実機で確認したい場合は `npm run dev -- --host` で起動し、同じ Wi-Fi の iPhone から `http://<PCのIP>:5173/itpassportapp/` を開く。
+- 開発中に実機で確認したい場合は `npm run dev -- --host` で起動し、同じ Wi-Fi の iPhone から `http://<PCのIP>:5173/ITpassportApp/` を開く。

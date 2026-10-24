@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
 const PORT = 4173
-const BASE_PATH = '/itpassportapp/'
+const BASE_PATH = '/ITpassportApp/'
 
 export default defineConfig({
   testDir: './e2e',

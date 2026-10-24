@@ -9,7 +9,7 @@ ITパスポート試験の学習を支援する iPhone 向け Web アプリ。�
 - 単体・結合テスト: Vitest + Testing Library（jsdom）
 - E2E: Playwright（iPhone 15 相当。CI は WebKit、ローカルは WebKit がなければ Chromium）
 - Lint: oxlint / Format: Prettier
-- デプロイ: GitHub Pages（`main` へのマージで自動公開。ベースパスは `/itpassportapp/`）
+- デプロイ: GitHub Pages（`main` へのマージで自動公開。ベースパスは `/ITpassportApp/`）
 
 ## TDD のルール（必ず守る）
 
@@ -36,7 +36,7 @@ Claude が Red → Green → Refactor の全サイクルを実行し、ユーザ
 ## コマンド
 
 ```bash
-npm run dev            # 開発サーバー（http://localhost:5173/itpassportapp/）
+npm run dev            # 開発サーバー（http://localhost:5173/ITpassportApp/）
 npm run test:watch     # TDD 中はこれを起動しておく
 npm test               # 単体・結合テスト
 npm run test:coverage  # カバレッジ付き
