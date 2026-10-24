@@ -46,6 +46,9 @@ type Props = {
   random?: Random
   storage?: Storage | null
   now?: () => number
+  // 新しい版が公開されているか。あるときだけ、トップ画面に更新の案内を出す
+  updateAvailable?: boolean
+  onUpdate?: () => void
 }
 
 function App({
@@ -53,6 +56,8 @@ function App({
   random = Math.random,
   storage = getDefaultStorage(),
   now = Date.now,
+  updateAvailable = false,
+  onUpdate = () => {},
 }: Props) {
   const [session, setSession] = useState<Session | null>(null)
   const [mode, setMode] = useState<Mode>({ type: 'quiz' })
@@ -133,6 +138,8 @@ function App({
   if (session === null) {
     return (
       <HomeScreen
+        updateAvailable={updateAvailable}
+        onUpdate={onUpdate}
         mockExams={mockExams}
         onStartExam={(key) =>
           setMockExam(mockExams.find((exam) => exam.key === key) ?? null)

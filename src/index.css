@@ -394,3 +394,18 @@ button.primary {
   background: #fff;
   border-radius: 8px;
 }
+
+.update-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--surface-explanation);
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+}
+
+.update-notice p {
+  margin: 0;
+  font-weight: bold;
+}
