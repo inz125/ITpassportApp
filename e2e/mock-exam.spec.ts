@@ -63,7 +63,10 @@ test('未回答を残したまま提出すると、不正解として採点さ�
   await page.getByRole('button', { name: '提出する' }).click()
 
   await expect(page.getByText('不合格', { exact: true })).toBeVisible()
-  await expect(page.getByText('総合：33点')).toBeVisible()
+  // 1問だけ正解。未回答は不正解として、全問を分母に採点される
+  await expect(
+    page.getByText(`総合：${Math.round((1 / TOTAL) * 1000)}点`),
+  ).toBeVisible()
   const second = page.getByRole('listitem').nth(1)
   await second.getByRole('button').click()
   await expect(second.getByText('あなたの答え：未回答')).toBeVisible()
