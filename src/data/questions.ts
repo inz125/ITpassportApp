@@ -1,4 +1,5 @@
 import type { Question } from '../domain/question'
+import { R08_QUESTIONS } from './pastExams/r08'
 
 // オリジナル問題（各分野10問、計30問）。正解は選択肢の先頭に置いてあり、出題時にシャッフルされる
 export const ORIGINAL_QUESTIONS: readonly Question[] = [
@@ -384,4 +385,7 @@ export const ORIGINAL_QUESTIONS: readonly Question[] = [
 ]
 
 // アプリで出題する全問題（オリジナル問題と過去問）
-export const QUESTIONS: readonly Question[] = [...ORIGINAL_QUESTIONS]
+export const QUESTIONS: readonly Question[] = [
+  ...ORIGINAL_QUESTIONS,
+  ...R08_QUESTIONS,
+]
