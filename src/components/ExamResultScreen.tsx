@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { formatElapsed } from '../domain/elapsed'
 import type { ExamGrade, ExamQuestionResult } from '../domain/examSession'
 import { FIELDS } from '../domain/fieldPractice'
-import { FIELD_LABELS, formatSource } from '../domain/question'
+import { choiceLabel, FIELD_LABELS, formatSource } from '../domain/question'
 import { Explanation } from './Explanation'
 
 type Props = {
@@ -32,8 +32,8 @@ function ResultItem({ result }: { result: ExamQuestionResult }) {
       </button>
       {open && (
         <div className="result-detail">
-          <p>{`あなたの答え：${selected === null ? '未回答' : question.choices[selected]}`}</p>
-          <p>{`正しい答え：${question.choices[question.answerIndex]}`}</p>
+          <p>{`あなたの答え：${selected === null ? '未回答' : `${choiceLabel(question, selected)}　${question.choices[selected]}`}`}</p>
+          <p>{`正しい答え：${choiceLabel(question, question.answerIndex)}　${question.choices[question.answerIndex]}`}</p>
           <Explanation question={question} />
           {source && <p className="note">{source}</p>}
         </div>
@@ -53,9 +53,9 @@ export function ExamResultScreen({ grade, elapsedMs, onRetry, onHome }: Props) {
       </p>
       <p className="score">{`総合：${judgement.totalScore}点`}</p>
       {FIELDS.map((field) => (
-        <p
-          key={field}
-        >{`${FIELD_LABELS[field]}：${judgement.fieldScores[field]}点`}</p>
+        <p key={field} className="field-score" data-field={field}>
+          {`${FIELD_LABELS[field]}：${judgement.fieldScores[field]}点`}
+        </p>
       ))}
       <p>{`所要時間：${formatElapsed(elapsedMs)}`}</p>
 

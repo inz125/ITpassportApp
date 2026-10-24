@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Question } from './question'
+import { choiceLabel, type Question } from './question'
 import { createQuiz, shuffle, shuffleAllChoices, shuffleChoices } from './quiz'
 
 const makeQuestion = (id: string): Question => ({
@@ -130,5 +130,53 @@ describe('shuffleAllChoices（順番はそのままで、選択肢だけ並び�
     shuffleAllChoices(pool, always0)
 
     expect(pool[0].choices).toEqual(['A', 'B', 'C', 'D'])
+  })
+})
+
+describe('選択肢の記号（ア・イ・ウ・エ）', () => {
+  const pastQuestion: Question = {
+    ...makeQuestion('p1'),
+    source: { exam: '令和8年度 ITパスポート試験 公開問題', number: 1 },
+  }
+
+  it('過去問は、並び替えても元の記号を保つ（解説の「アは〜」と合う）', () => {
+    const shuffled = shuffleChoices(pastQuestion, always0)
+
+    expect(shuffled.choices).toEqual(['B', 'C', 'D', 'A'])
+    expect(shuffled.choiceLabels).toEqual(['イ', 'ウ', 'エ', 'ア'])
+  })
+
+  it('並び替えたあとも、正解の選択肢には元の正解の記号が付く', () => {
+    const shuffled = shuffleChoices(
+      { ...pastQuestion, answerIndex: 2 },
+      always0,
+    )
+
+    expect(choiceLabel(shuffled, shuffled.answerIndex)).toBe('ウ')
+  })
+
+  it('オリジナル問題には元の記号を持たせない（正解が常にアだと分かってしまうため）', () => {
+    const shuffled = shuffleChoices(makeQuestion('o1'), always0)
+
+    expect(shuffled.choiceLabels).toBeUndefined()
+    expect([0, 1, 2, 3].map((i) => choiceLabel(shuffled, i))).toEqual([
+      'ア',
+      'イ',
+      'ウ',
+      'エ',
+    ])
+  })
+
+  it('並び替えない過去問は、元の順に ア・イ・ウ・エ が付く', () => {
+    const fixed = { ...pastQuestion, fixedChoiceOrder: true }
+
+    const shuffled = shuffleChoices(fixed, always0)
+
+    expect([0, 1, 2, 3].map((i) => choiceLabel(shuffled, i))).toEqual([
+      'ア',
+      'イ',
+      'ウ',
+      'エ',
+    ])
   })
 })

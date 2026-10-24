@@ -54,6 +54,8 @@ export function HomeScreen({
         <button
           key={field}
           type="button"
+          className="field-button"
+          data-field={field}
           disabled={fieldCounts[field] === 0}
           onClick={() => onStartField(field)}
         >

@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { formatSource, isPastQuestion, type Question } from './question'
+import {
+  choiceLabel,
+  formatSource,
+  isPastQuestion,
+  type Question,
+} from './question'
 
 const original: Question = {
   id: 'strategy-1',
@@ -38,5 +43,27 @@ describe('formatSource（出典の表示）', () => {
 
   it('オリジナル問題には出典がない', () => {
     expect(formatSource(original)).toBeNull()
+  })
+})
+
+describe('choiceLabel（選択肢の記号）', () => {
+  it('記号が決まっていない問題は、表示の位置に ア・イ・ウ・エ を付ける', () => {
+    expect([0, 1, 2, 3].map((i) => choiceLabel(original, i))).toEqual([
+      'ア',
+      'イ',
+      'ウ',
+      'エ',
+    ])
+  })
+
+  it('記号が決まっている問題は、その記号を返す', () => {
+    const shuffled = { ...past, choiceLabels: ['ウ', 'ア', 'エ', 'イ'] }
+
+    expect([0, 1, 2, 3].map((i) => choiceLabel(shuffled, i))).toEqual([
+      'ウ',
+      'ア',
+      'エ',
+      'イ',
+    ])
   })
 })

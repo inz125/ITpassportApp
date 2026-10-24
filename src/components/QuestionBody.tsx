@@ -9,7 +9,7 @@ export function QuestionBody({ question }: Props) {
   const source = formatSource(question)
 
   return (
-    <div className="question-body">
+    <div className="question-body card" data-card="question">
       {question.passage && (
         <details className="passage" open>
           <summary>事例文</summary>

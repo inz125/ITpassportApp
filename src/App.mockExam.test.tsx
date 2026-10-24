@@ -5,6 +5,7 @@ import App from './App'
 import type { History } from './domain/history'
 import type { Question } from './domain/question'
 import { HISTORY_STORAGE_KEY } from './storage/historyStorage'
+import { choiceText } from './test/choice'
 
 type User = ReturnType<typeof userEvent.setup>
 type Kind = '正解' | '誤り1'
@@ -122,9 +123,7 @@ describe('模擬試験の出題', () => {
 
     await startExam(user)
 
-    const names = screen
-      .getAllByRole('button', { name: /^2-/ })
-      .map((button) => button.textContent)
+    const names = screen.getAllByRole('button', { name: /^2-/ }).map(choiceText)
     expect(names).toEqual(['2-誤り1', '2-誤り2', '2-誤り3', '2-正解'])
   })
 })
@@ -425,10 +424,11 @@ describe('結果画面', () => {
     await user.click(within(first).getByRole('button'))
 
     expect(
-      within(first).getByText(`あなたの答え：${ids[0]}-誤り1`),
+      // 乱数が常に0だと、選択肢は［誤り1，誤り2，誤り3，正解］の順に並ぶので、記号はア（誤り1）とエ（正解）
+      within(first).getByText(`あなたの答え：ア ${ids[0]}-誤り1`),
     ).toBeInTheDocument()
     expect(
-      within(first).getByText(`正しい答え：${ids[0]}-正解`),
+      within(first).getByText(`正しい答え：エ ${ids[0]}-正解`),
     ).toBeInTheDocument()
     expect(within(first).getByText(`問題${ids[0]}の解説`)).toBeInTheDocument()
   })

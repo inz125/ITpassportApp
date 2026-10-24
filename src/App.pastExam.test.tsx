@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import App from './App'
 import type { Question } from './domain/question'
+import { choiceText } from './test/choice'
 
 type User = ReturnType<typeof userEvent.setup>
 
@@ -73,7 +74,7 @@ describe('一問一答での過去問の表示', () => {
 
     const choices = screen
       .getAllByRole('button')
-      .map((button) => button.textContent)
+      .map(choiceText)
       .filter((name) => ['ア', 'イ', 'ウ', 'エ'].includes(name!))
     expect(choices).toEqual(['ア', 'イ', 'ウ', 'エ'])
     expect(screen.getByText(`出典：${EXAM} 問50`)).toBeInTheDocument()

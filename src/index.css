@@ -35,6 +35,27 @@ body {
   --border: #d0d7de;
   --ok: #1a7f37;
   --ng: #cf222e;
+
+  /* カード・選択肢の背景 */
+  --surface: #f6f8fa;
+  --surface-explanation: #fff8e6;
+  --border-explanation: #e8d49a;
+  --choice-bg: #ffffff;
+
+  /* 正解（緑）・不正解（赤）の背景 */
+  --ok-bg: #dafbe1;
+  --ok-mark: #116329;
+  --ng-bg: #ffebe9;
+  --ng-mark: #a40e26;
+
+  /* 選択肢の記号のバッジ */
+  --badge-bg: #0b6bcb;
+  --badge-text: #ffffff;
+
+  /* 分野ごとの色（白い文字との明るさの差が 4.5:1 以上になる濃さ） */
+  --field-strategy: #0b6bcb;
+  --field-management: #1a7f37;
+  --field-technology: #b34700;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,7 +63,33 @@ body {
     --border: #30363d;
     --ok: #3fb950;
     --ng: #f85149;
+
+    --surface: #161b22;
+    --surface-explanation: #2a2412;
+    --border-explanation: #5b4a1e;
+    --choice-bg: #0d1117;
+
+    --ok-bg: #12361f;
+    --ok-mark: #56d364;
+    --ng-bg: #4c1a1e;
+    --ng-mark: #ff938a;
+
+    --badge-bg: #1f6feb;
+    --badge-text: #ffffff;
   }
+}
+
+/* 分野の色。ラベル・トップのボタン・結果の点で共通に使う */
+[data-field='strategy'] {
+  --field-color: var(--field-strategy);
+}
+
+[data-field='management'] {
+  --field-color: var(--field-management);
+}
+
+[data-field='technology'] {
+  --field-color: var(--field-technology);
 }
 
 .screen {
@@ -97,10 +144,27 @@ button.primary {
   gap: 12px;
 }
 
-.quiz-header .field {
-  flex: 1;
-  font-size: 0.9rem;
-  opacity: 0.8;
+.field-label {
+  padding: 2px 10px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #ffffff;
+  background: var(--field-color);
+  border-radius: 999px;
+}
+
+.quiz-header .field-label {
+  margin-right: auto;
+}
+
+.field-button {
+  border-left: 6px solid var(--field-color);
+}
+
+.field-score {
+  margin: 0;
+  padding-left: 10px;
+  border-left: 6px solid var(--field-color);
 }
 
 .quiz-header button {
@@ -115,20 +179,57 @@ button.primary {
 }
 
 .choice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
   text-align: left;
   overflow-wrap: anywhere;
+  background: var(--choice-bg);
 }
 
 .choice:disabled {
   opacity: 1;
 }
 
-.choice.correct {
+.choice .badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--badge-text);
+  background: var(--badge-bg);
+  border-radius: 50%;
+}
+
+.choice .choice-text {
+  flex: 1;
+}
+
+.choice .mark {
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.choice[data-state='correct'] {
+  background: var(--ok-bg);
   border: 2px solid var(--ok);
 }
 
-.choice.wrong {
+.choice[data-state='correct'] .mark {
+  color: var(--ok-mark);
+}
+
+.choice[data-state='wrong'] {
+  background: var(--ng-bg);
   border: 2px solid var(--ng);
+}
+
+.choice[data-state='wrong'] .mark {
+  color: var(--ng-mark);
 }
 
 .feedback {
@@ -247,6 +348,26 @@ button.primary {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.card {
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.card.explanation {
+  background: var(--surface-explanation);
+  border-color: var(--border-explanation);
+}
+
+.card.explanation p {
+  margin: 0;
+}
+
+.card.explanation p + p {
+  margin-top: 8px;
 }
 
 .passage {

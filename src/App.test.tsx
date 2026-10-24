@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import App from './App'
 import type { Question } from './domain/question'
+import { choiceText } from './test/choice'
 
 // 選択肢の文言から正解・不正解を判別できるようにした3問の問題集
 const pool: Question[] = (['1', '2', '3'] as const).map((id, index) => ({
@@ -70,7 +71,7 @@ describe('解答中の画面', () => {
     ).toBeInTheDocument()
     const choices = screen
       .getAllByRole('button')
-      .filter((button) => button.textContent!.startsWith(`${id}-`))
+      .filter((button) => choiceText(button).startsWith(`${id}-`))
     expect(choices).toHaveLength(4)
   })
 
@@ -118,7 +119,7 @@ describe('解答後', () => {
 
     const choices = screen
       .getAllByRole('button')
-      .filter((button) => button.textContent!.startsWith(`${id}-`))
+      .filter((button) => choiceText(button).startsWith(`${id}-`))
     for (const choice of choices) {
       expect(choice).toBeDisabled()
     }

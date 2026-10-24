@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { formatElapsed } from '../domain/elapsed'
 import type { ExamSession } from '../domain/examSession'
-import { FIELD_LABELS } from '../domain/question'
+import { ChoiceButton } from './ChoiceButton'
+import { FieldLabel } from './FieldLabel'
 import { QuestionBody } from './QuestionBody'
 import { QuitDialog } from './QuitDialog'
 
@@ -33,7 +34,7 @@ export function ExamQuestionScreen({
     <main className="screen">
       <header className="quiz-header">
         <p>{`${session.current + 1} / ${total}問`}</p>
-        <p className="field">{FIELD_LABELS[question.field]}</p>
+        <FieldLabel field={question.field} />
         <button type="button" onClick={() => setConfirming(true)}>
           中断する
         </button>
@@ -44,15 +45,13 @@ export function ExamQuestionScreen({
 
       <div className="choices">
         {question.choices.map((choice, index) => (
-          <button
+          <ChoiceButton
             key={choice}
-            type="button"
-            className="choice"
-            aria-pressed={selected === index}
+            question={question}
+            index={index}
+            pressed={selected === index}
             onClick={() => onSelect(index)}
-          >
-            {choice}
-          </button>
+          />
         ))}
       </div>
 
