@@ -6,6 +6,10 @@ export type QuestionSource = {
   number: number
 }
 
+// 図の画像は src/data/figures/<回>/ に置き、データ側で
+// new URL('../figures/r08/q003.png', import.meta.url).href のように参照する。
+// Vite がビルド時に配信用の URL（ベースパス・ハッシュ付き）に変換し、
+// Node（E2E やテスト）でもそのまま読み込める
 export type QuestionFigure = {
   src: string
   alt: string
