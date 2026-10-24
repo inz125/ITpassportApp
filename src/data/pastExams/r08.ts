@@ -308,7 +308,7 @@ export const R08_QUESTIONS: readonly Question[] = [
   q({
     number: 25,
     field: 'strategy',
-    text: '大容量，頻繁な更新，多種多様という三つの要素をもつ情報資産を“ビッグデータ”と定義する考え方がある。このビッグデータを特徴付ける三つの要素を総称して何というか。',
+    text: '大容量，頻繁な更新，多種多様という三つの要素をもつ情報資産を“ビッグデータ”と定義する考え方がある。このビッグデータを特徴づける三つの要素を総称して何というか。',
     choices: ['3C', '3D', '3G', '3V'],
     answerIndex: 3,
     explanation:
