@@ -8,6 +8,8 @@
     -apple-system,
     'Hiragino Sans',
     sans-serif;
+  /* 問題文や解説が長いので、iPhone で折り返しすぎないよう基本の文字をやや小さくする */
+  font-size: 15px;
   line-height: 1.6;
   color-scheme: light dark;
   color: var(--text);
@@ -59,7 +61,7 @@ h2 {
 }
 
 h2 {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
 }
 
 p {
