@@ -3,6 +3,7 @@ import {
   countWeak,
   pickWeakQuestions,
   recordAnswer,
+  recordResults,
   type History,
 } from './history'
 import type { Question } from './question'
@@ -80,5 +81,24 @@ describe('countWeak（苦手の数）', () => {
 
   it('問題集にない問題の履歴は数えない', () => {
     expect(countWeak(pool, { gone: false })).toBe(0)
+  })
+})
+
+describe('recordResults（まとめて記録）', () => {
+  it('複数の問題の正誤を、まとめて記録する', () => {
+    const history = recordResults({ '1': true }, [
+      { question: makeQuestion('1'), correct: false },
+      { question: makeQuestion('2'), correct: true },
+    ])
+
+    expect(history).toEqual({ '1': false, '2': true })
+  })
+
+  it('元の履歴を変更しない', () => {
+    const history: History = { '1': true }
+
+    recordResults(history, [{ question: makeQuestion('1'), correct: false }])
+
+    expect(history).toEqual({ '1': true })
   })
 })
