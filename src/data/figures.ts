@@ -8,10 +8,11 @@ export const createFigureResolver =
     return url
   }
 
+// 型引数つきの import.meta.glob<string>(...) は変換されず空になるため、型は as で付ける
 export const figureUrl = createFigureResolver(
-  import.meta.glob<string>('./figures/*/*.png', {
+  import.meta.glob('./figures/*/*.png', {
     eager: true,
     query: '?url',
     import: 'default',
-  }),
+  }) as Record<string, string>,
 )
