@@ -10,6 +10,7 @@ export type MockExamButton = {
 }
 
 type Props = {
+  onShowStats: () => void
   updateAvailable: boolean
   onUpdate: () => void
   mockExams: readonly MockExamButton[]
@@ -22,6 +23,7 @@ type Props = {
 }
 
 export function HomeScreen({
+  onShowStats,
   updateAvailable,
   onUpdate,
   mockExams,
@@ -60,6 +62,9 @@ export function HomeScreen({
         {`苦手を復習する（${weakCount}問）`}
       </button>
       {weakCount === 0 && <p className="note">苦手な問題はありません</p>}
+      <button type="button" onClick={onShowStats}>
+        学習の記録
+      </button>
 
       <h2>分野別演習</h2>
       {FIELDS.map((field) => (

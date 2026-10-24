@@ -3,6 +3,7 @@ import { ExamFlow } from './components/ExamFlow'
 import { HomeScreen, type MockExamButton } from './components/HomeScreen'
 import { QuizScreen } from './components/QuizScreen'
 import { ResultScreen } from './components/ResultScreen'
+import { StatsScreen } from './components/StatsScreen'
 import { QUESTIONS } from './data/questions'
 import { canStartExam } from './domain/examSession'
 import { countByField, pickByField } from './domain/fieldPractice'
@@ -15,8 +16,10 @@ import {
 } from './domain/history'
 import type { Field } from './domain/judgeExam'
 import type { Question } from './domain/question'
+import { addExamRecord, type ExamRecord } from './domain/examRecords'
 import { groupPastExams, shortExamName } from './domain/pastExam'
 import { createQuiz, type Random } from './domain/quiz'
+import { fieldProgress } from './domain/stats'
 import {
   getResults,
   goNext,
@@ -26,6 +29,7 @@ import {
   startSession,
   type Session,
 } from './domain/quizSession'
+import { loadExamRecords, saveExamRecords } from './storage/examRecordStorage'
 import {
   getDefaultStorage,
   loadHistory,
@@ -63,6 +67,10 @@ function App({
   const [mode, setMode] = useState<Mode>({ type: 'quiz' })
   const [history, setHistory] = useState<History>(() => loadHistory(storage))
   const [mockExam, setMockExam] = useState<MockExam | null>(null)
+  const [examRecords, setExamRecords] = useState<ExamRecord[]>(() =>
+    loadExamRecords(storage),
+  )
+  const [showStats, setShowStats] = useState(false)
 
   const pickSource = (target: Mode): readonly Question[] => {
     switch (target.type) {
@@ -124,13 +132,34 @@ function App({
         keepOrder={mockExam.keepOrder}
         random={random}
         now={now}
-        onSubmit={(results) => {
+        onSubmit={(grade, elapsedMs) => {
           // 提出したときに、全問の正誤をまとめて記録する（未回答は不正解）
-          const nextHistory = recordResults(history, results)
+          const nextHistory = recordResults(history, grade.results)
           setHistory(nextHistory)
           saveHistory(storage, nextHistory)
+          // 模擬試験の成績も残す（中断したときは、ここには来ないので残らない）
+          const nextRecords = addExamRecord(examRecords, {
+            exam: mockExam.key === 'all' ? '模擬試験' : mockExam.label,
+            at: now(),
+            totalScore: grade.judgement.totalScore,
+            passed: grade.judgement.passed,
+            fieldScores: grade.judgement.fieldScores,
+            elapsedMs,
+          })
+          setExamRecords(nextRecords)
+          saveExamRecords(storage, nextRecords)
         }}
         onExit={() => setMockExam(null)}
+      />
+    )
+  }
+
+  if (session === null && showStats) {
+    return (
+      <StatsScreen
+        progress={fieldProgress(questions, history)}
+        records={examRecords}
+        onBack={() => setShowStats(false)}
       />
     )
   }
@@ -138,6 +167,7 @@ function App({
   if (session === null) {
     return (
       <HomeScreen
+        onShowStats={() => setShowStats(true)}
         updateAvailable={updateAvailable}
         onUpdate={onUpdate}
         mockExams={mockExams}
