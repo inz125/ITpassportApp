@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { FIELD_LABELS } from '../domain/question'
 import { isAnswerCorrect, type Session } from '../domain/quizSession'
+import { Explanation } from './Explanation'
+import { QuestionBody } from './QuestionBody'
 import { QuitDialog } from './QuitDialog'
 
 type Props = {
@@ -28,7 +30,7 @@ export function QuizScreen({ session, onSelect, onNext, onQuit }: Props) {
         </button>
       </header>
 
-      <h2>{question.text}</h2>
+      <QuestionBody key={question.id} question={question} />
 
       <div className="choices">
         {question.choices.map((choice, index) => {
@@ -61,7 +63,7 @@ export function QuizScreen({ session, onSelect, onNext, onQuit }: Props) {
           {!correct && (
             <p>{`正解は「${question.choices[question.answerIndex]}」です`}</p>
           )}
-          <p>{question.explanation}</p>
+          <Explanation question={question} />
         </section>
       )}
 
