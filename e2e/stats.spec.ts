@@ -46,3 +46,53 @@ test('学習の記録の画面でも、横スクロールが出ない', async ({
 
   expect(hasHorizontalScroll).toBe(false)
 })
+
+for (const scheme of ['light', 'dark'] as const) {
+  test.describe(`正解率の棒（${scheme === 'light' ? '明るい画面' : '暗い画面'}）`, () => {
+    test.use({ colorScheme: scheme })
+
+    test('解いた分野の棒は、分野ごとに違う色で、空の部分と見分けがつく', async ({
+      page,
+    }) => {
+      await page.goto('./')
+      // 一問一答で1問解いて、その分野の棒を出す
+      await page.getByRole('button', { name: '一問一答を始める' }).click()
+      await answerCurrent(page, true)
+      await goNext(page)
+      await page.getByRole('button', { name: '中断する' }).click()
+      await page
+        .getByRole('alertdialog')
+        .getByRole('button', { name: '中断する' })
+        .click()
+      await page.getByRole('button', { name: '学習の記録' }).click()
+
+      const fills = await page
+        .locator('.rate-bar-fill')
+        .evaluateAll((els) =>
+          els.map((el) => getComputedStyle(el).backgroundColor),
+        )
+      const track = await page
+        .locator('.rate-bar')
+        .first()
+        .evaluate((el) => getComputedStyle(el).backgroundColor)
+
+      expect(new Set(fills).size).toBe(3)
+      for (const fill of fills) expect(fill).not.toBe(track)
+    })
+
+    test('棒は画面の幅に収まる', async ({ page }) => {
+      await page.goto('./')
+      await page.getByRole('button', { name: '学習の記録' }).click()
+
+      const widths = await page
+        .locator('.rate-bar')
+        .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().width))
+      const viewport = page.viewportSize()!.width
+
+      for (const width of widths) {
+        expect(width).toBeGreaterThan(0)
+        expect(width).toBeLessThanOrEqual(viewport)
+      }
+    })
+  })
+}

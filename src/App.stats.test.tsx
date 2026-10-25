@@ -103,6 +103,51 @@ describe('分野別の正解率', () => {
   })
 })
 
+describe('分野別の正解率の横棒グラフ', () => {
+  it('解いた分野は、正解率の長さの棒が出る', async () => {
+    // ストラテジ（問題1）は正解 → 100%
+    const user = setup({ history: { '1': true } })
+
+    await openStats(user)
+
+    const bar = screen.getByRole('img', { name: 'ストラテジの正解率 100%' })
+    expect(bar.querySelector('.rate-bar-fill')).toHaveStyle({ width: '100%' })
+  })
+
+  it('正解と不正解が混じるときは、正解率に合わせた長さになる', async () => {
+    // テクノロジを2問にして、1問正解・1問不正解 → 50%
+    const user = setup({
+      size: 6,
+      history: { '3': true, '6': false },
+    })
+
+    await openStats(user)
+
+    const bar = screen.getByRole('img', { name: 'テクノロジの正解率 50%' })
+    expect(bar.querySelector('.rate-bar-fill')).toHaveStyle({ width: '50%' })
+  })
+
+  it('解いていない分野は、棒が空で、読み上げでも解いていないと分かる', async () => {
+    const user = setup()
+
+    await openStats(user)
+
+    const bar = screen.getByRole('img', {
+      name: 'マネジメントはまだ解いていません',
+    })
+    expect(bar.querySelector('.rate-bar-fill')).toHaveStyle({ width: '0%' })
+  })
+
+  it('棒のそばに、解いた数と正解率の文字も残る', async () => {
+    const user = setup({ history: { '1': true } })
+
+    await openStats(user)
+
+    const item = screen.getByText('ストラテジ').closest('li')!
+    expect(item).toHaveTextContent('1問解いた（全1問）・正解1問（100%）')
+  })
+})
+
 describe('模擬試験の成績', () => {
   it('記録がないときは「模擬試験の記録はまだありません」と表示する', async () => {
     const user = setup()
