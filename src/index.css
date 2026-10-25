@@ -482,3 +482,23 @@ button.primary {
   height: 100%;
   background: var(--field-color);
 }
+
+.overall-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  --field-color: var(--accent);
+}
+
+.overall-progress h2 {
+  margin: 0;
+}
+
+/* 解いた割合の棒は、正解率の棒と見分けがつくように、斜線にする */
+.rate-bar.coverage .rate-bar-fill {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--field-color) 0 6px,
+    transparent 6px 10px
+  );
+}

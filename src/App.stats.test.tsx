@@ -148,6 +148,62 @@ describe('分野別の正解率の横棒グラフ', () => {
   })
 })
 
+describe('解いた割合（今ある問題の何％を解いたか）', () => {
+  it('分野ごとに、解いた割合の棒と文字が出る', async () => {
+    // 問題集は6問（分野ごとに2問）。テクノロジの2問を解いた → 100%、ストラテジは0%
+    const user = setup({ size: 6, history: { '3': true, '6': false } })
+
+    await openStats(user)
+
+    const bar = screen.getByRole('img', { name: 'テクノロジの解いた割合 100%' })
+    expect(bar.querySelector('.rate-bar-fill')).toHaveStyle({ width: '100%' })
+    const empty = screen.getByRole('img', { name: 'ストラテジの解いた割合 0%' })
+    expect(empty.querySelector('.rate-bar-fill')).toHaveStyle({ width: '0%' })
+    const item = screen.getByText('テクノロジ').closest('li')!
+    expect(item).toHaveTextContent('解いた割合 100%（全2問中2問）')
+  })
+
+  it('一番上に「全分野の合計」の解いた割合と正解率が出る', async () => {
+    // 6問中2問を解いた → 33%。その2問のうち1問が正解 → 正解率 50%
+    const user = setup({ size: 6, history: { '3': true, '6': false } })
+
+    await openStats(user)
+
+    const total = screen.getByRole('region', { name: '全分野の合計' })
+    expect(
+      within(total).getByRole('img', { name: '全分野の解いた割合 33%' }),
+    ).toBeInTheDocument()
+    expect(
+      within(total).getByRole('img', { name: '全分野の正解率 50%' }),
+    ).toBeInTheDocument()
+    expect(total).toHaveTextContent('解いた割合 33%（全6問中2問）')
+    expect(total).toHaveTextContent('正解1問（50%）')
+  })
+
+  it('何も解いていないときは、全体の解いた割合は 0%、正解率は「まだ解いていません」', async () => {
+    const user = setup()
+
+    await openStats(user)
+
+    const total = screen.getByRole('region', { name: '全分野の合計' })
+    expect(
+      within(total).getByRole('img', { name: '全分野の解いた割合 0%' }),
+    ).toBeInTheDocument()
+    expect(
+      within(total).getByRole('img', { name: '全分野はまだ解いていません' }),
+    ).toBeInTheDocument()
+  })
+
+  it('問題集にない問題の履歴は、解いた割合に数えない', async () => {
+    const user = setup({ history: { '1': true, deleted: true } })
+
+    await openStats(user)
+
+    const total = screen.getByRole('region', { name: '全分野の合計' })
+    expect(total).toHaveTextContent('解いた割合 33%（全3問中1問）')
+  })
+})
+
 describe('模擬試験の成績', () => {
   it('記録がないときは「模擬試験の記録はまだありません」と表示する', async () => {
     const user = setup()

@@ -3,7 +3,12 @@ import { recentExamRecords } from '../domain/examRecords'
 import { formatElapsed } from '../domain/elapsed'
 import { FIELDS } from '../domain/fieldPractice'
 import { FIELD_LABELS } from '../domain/question'
-import type { FieldProgress } from '../domain/stats'
+import {
+  coverageRate,
+  overallProgress,
+  type FieldProgress,
+  type OverallProgress,
+} from '../domain/stats'
 import { FieldLabel } from './FieldLabel'
 
 type Props = {
@@ -14,16 +19,62 @@ type Props = {
 
 const PASSING_SCORE = 600
 
-const describeProgress = ({ answered, total, correct, rate }: FieldProgress) =>
+const describeProgress = ({
+  answered,
+  total,
+  correct,
+  rate,
+}: OverallProgress) =>
   answered === 0
     ? `まだ解いていません（全${total}問）`
     : `${answered}問解いた（全${total}問）・正解${correct}問（${rate}%）`
 
-// 棒グラフの読み上げの名前。解いていない分野は、割合ではなく解いていないことを伝える
-const describeBar = ({ field, rate }: FieldProgress) =>
-  rate === null
-    ? `${FIELD_LABELS[field]}はまだ解いていません`
-    : `${FIELD_LABELS[field]}の正解率 ${rate}%`
+const describeCoverage = ({ answered, total }: OverallProgress) =>
+  `解いた割合 ${coverageRate(answered, total)}%（全${total}問中${answered}問）`
+
+// 棒グラフの読み上げの名前。解いていないときは、正解率ではなく解いていないことを伝える
+const describeRateBar = (name: string, { rate }: OverallProgress) =>
+  rate === null ? `${name}はまだ解いていません` : `${name}の正解率 ${rate}%`
+
+const describeCoverageBar = (name: string, item: OverallProgress) =>
+  `${name}の解いた割合 ${coverageRate(item.answered, item.total)}%`
+
+// 横棒。長さが割合（0〜100%）
+function Bar({
+  label,
+  percent,
+  coverage = false,
+}: {
+  label: string
+  percent: number
+  coverage?: boolean
+}) {
+  return (
+    <div
+      className={coverage ? 'rate-bar coverage' : 'rate-bar'}
+      role="img"
+      aria-label={label}
+    >
+      <div className="rate-bar-fill" style={{ width: `${percent}%` }} />
+    </div>
+  )
+}
+
+// 解いた割合と正解率の2本の棒と、文字
+function ProgressBars({ name, item }: { name: string; item: OverallProgress }) {
+  return (
+    <>
+      <Bar
+        coverage
+        label={describeCoverageBar(name, item)}
+        percent={coverageRate(item.answered, item.total)}
+      />
+      <span>{describeCoverage(item)}</span>
+      <Bar label={describeRateBar(name, item)} percent={item.rate ?? 0} />
+      <span>{describeProgress(item)}</span>
+    </>
+  )
+}
 
 const formatDate = (at: number) =>
   new Date(at).toLocaleDateString('ja-JP', {
@@ -40,18 +91,17 @@ export function StatsScreen({ progress, records, onBack }: Props) {
     <main className="screen">
       <h1>学習の記録</h1>
 
+      <section className="overall-progress" aria-label="全分野の合計">
+        <h2>全分野の合計</h2>
+        <ProgressBars name="全分野" item={overallProgress(progress)} />
+      </section>
+
       <h2>分野別の正解率</h2>
       <ul className="field-progress">
         {progress.map((item) => (
           <li key={item.field} data-field={item.field}>
             <FieldLabel field={item.field} />
-            <div className="rate-bar" role="img" aria-label={describeBar(item)}>
-              <div
-                className="rate-bar-fill"
-                style={{ width: `${item.rate ?? 0}%` }}
-              />
-            </div>
-            <span>{describeProgress(item)}</span>
+            <ProgressBars name={FIELD_LABELS[item.field]} item={item} />
           </li>
         ))}
       </ul>
