@@ -19,6 +19,12 @@ const describeProgress = ({ answered, total, correct, rate }: FieldProgress) =>
     ? `まだ解いていません（全${total}問）`
     : `${answered}問解いた（全${total}問）・正解${correct}問（${rate}%）`
 
+// 棒グラフの読み上げの名前。解いていない分野は、割合ではなく解いていないことを伝える
+const describeBar = ({ field, rate }: FieldProgress) =>
+  rate === null
+    ? `${FIELD_LABELS[field]}はまだ解いていません`
+    : `${FIELD_LABELS[field]}の正解率 ${rate}%`
+
 const formatDate = (at: number) =>
   new Date(at).toLocaleDateString('ja-JP', {
     year: 'numeric',
@@ -39,6 +45,12 @@ export function StatsScreen({ progress, records, onBack }: Props) {
         {progress.map((item) => (
           <li key={item.field} data-field={item.field}>
             <FieldLabel field={item.field} />
+            <div className="rate-bar" role="img" aria-label={describeBar(item)}>
+              <div
+                className="rate-bar-fill"
+                style={{ width: `${item.rate ?? 0}%` }}
+              />
+            </div>
             <span>{describeProgress(item)}</span>
           </li>
         ))}
