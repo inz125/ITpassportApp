@@ -38,3 +38,27 @@ export const fieldProgress = (
           : Math.round((correct / answered.length) * 100),
     }
   })
+
+// 解いた割合（％、四捨五入）。問題がないときも 0 を返す
+export const coverageRate = (answered: number, total: number): number =>
+  total === 0 ? 0 : Math.round((answered / total) * 100)
+
+export type OverallProgress = Pick<
+  FieldProgress,
+  'total' | 'answered' | 'correct' | 'rate'
+>
+
+// 全分野の合計。分野ごとの数を足して、全体の正解率を出す
+export const overallProgress = (
+  progress: readonly FieldProgress[],
+): OverallProgress => {
+  const total = progress.reduce((sum, item) => sum + item.total, 0)
+  const answered = progress.reduce((sum, item) => sum + item.answered, 0)
+  const correct = progress.reduce((sum, item) => sum + item.correct, 0)
+  return {
+    total,
+    answered,
+    correct,
+    rate: answered === 0 ? null : Math.round((correct / answered) * 100),
+  }
+}

@@ -33,7 +33,9 @@ test('一問一答で解いた分が、分野別の正解率に反映される',
     .click()
   await page.getByRole('button', { name: '学習の記録' }).click()
 
-  await expect(page.getByText(/1問解いた.*正解1問（100%）/)).toBeVisible()
+  await expect(
+    page.locator('.field-progress').getByText(/1問解いた.*正解1問（100%）/),
+  ).toBeVisible()
 })
 
 test('学習の記録の画面でも、横スクロールが出ない', async ({ page }) => {
@@ -67,7 +69,7 @@ for (const scheme of ['light', 'dark'] as const) {
       await page.getByRole('button', { name: '学習の記録' }).click()
 
       const fills = await page
-        .locator('.rate-bar-fill')
+        .locator('.field-progress .rate-bar:not(.coverage) .rate-bar-fill')
         .evaluateAll((els) =>
           els.map((el) => getComputedStyle(el).backgroundColor),
         )
@@ -96,3 +98,20 @@ for (const scheme of ['light', 'dark'] as const) {
     })
   })
 }
+
+test('解いた割合の棒は、正解率の棒と見分けがつく（斜線）', async ({ page }) => {
+  await page.goto('./')
+  await page.getByRole('button', { name: '学習の記録' }).click()
+
+  const coverage = await page
+    .locator('.rate-bar.coverage .rate-bar-fill')
+    .first()
+    .evaluate((el) => getComputedStyle(el).backgroundImage)
+  const correctRate = await page
+    .locator('.rate-bar:not(.coverage) .rate-bar-fill')
+    .first()
+    .evaluate((el) => getComputedStyle(el).backgroundImage)
+
+  expect(coverage).toContain('repeating-linear-gradient')
+  expect(correctRate).not.toContain('repeating-linear-gradient')
+})
